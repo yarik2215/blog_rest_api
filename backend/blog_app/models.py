@@ -13,24 +13,24 @@ class Post(models.Model):
     Post model. Store post text, owner etc.
     '''
     title = models.CharField(_('title'), max_length=200)
-    slug = models.SlugField(max_length=255, db_index=True, unique=False)
+    # slug = models.SlugField(max_length=255, db_index=True, unique=False)
     owner = models.ForeignKey(get_user_model(), on_delete=CASCADE, verbose_name=_('owner'))
     likes = models.ManyToManyField(get_user_model(), related_name='liked_posts')
     text = models.TextField()
     updated = models.DateTimeField(_('updated'), auto_now=True)
 
-    def save(self, *args, **kwargs) -> None:
-        '''
-        Prepopuldate slug with post title and post id last 50 digits.
-        '''
-        self.slug = slugify(' '.join(self.owner.username[0:50], self.title))
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs) -> None:
+    #     '''
+    #     Prepopuldate slug with post title and post id last 50 digits.
+    #     '''
+    #     self.slug = slugify(' '.join(self.owner.username[0:50], self.title))
+    #     super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         '''
         Return slug.
         '''
-        return self.slug
+        return self.title
 
     def count_likes(self) -> int:
         '''
