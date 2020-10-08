@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from .models import Post, Comment
 from rest_framework import viewsets, permissions
 from rest_framework import status
@@ -30,15 +31,17 @@ class PostsViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
 
-    # @action(detail=True)
-    # def like(self, request, *args, **kwargs):
-    #     status_code = status.HTTP_200_OK
-    #     snippet = self.get_object()
-    #     try:
-    #         snippet.like_post(request.user)
-    #     except ValueError:
-    #         status_code = status.HTTP_400_BAD_REQUEST
-    #     return Response(snippet, status=status_code)
+    @action(detail=True)
+    def like(self, request, *args, **kwargs):
+        post = self.get_object()
+        serializers = PostSerializer(post, context={'request':request})
+        post_url = serializers.data['url']
+        try:
+            post.like_post(request.user)
+            message = f'liked {post_url}'
+        except ValueError:
+            message = f'already liked {post_url}'
+        return Response({'message':message}, status.HTTP_200_OK)
 
 
     def perform_create(self, serializer):

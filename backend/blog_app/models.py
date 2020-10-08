@@ -14,7 +14,7 @@ class Post(models.Model):
     '''
     title = models.CharField(_('title'), max_length=200)
     # slug = models.SlugField(max_length=255, db_index=True, unique=False)
-    owner = models.ForeignKey(get_user_model(), on_delete=CASCADE, verbose_name=_('owner'))
+    owner = models.ForeignKey(get_user_model(), on_delete=CASCADE, verbose_name=_('owner'), related_name='posts')
     likes = models.ManyToManyField(get_user_model(), related_name='liked_posts')
     text = models.TextField()
     updated = models.DateTimeField(_('updated'), auto_now=True)
@@ -44,7 +44,7 @@ class Post(models.Model):
         If user alreday like that post raise ValueError,
         else add user to self.likes .
         '''
-        if user in self.likes:
+        if user in self.likes.all():
             raise ValueError(f'User already have liked this post.')
         self.likes.add(user)
 

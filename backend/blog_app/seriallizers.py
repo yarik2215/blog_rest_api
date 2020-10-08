@@ -13,7 +13,7 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         model = Post
         fields = ['url', 'title', 'owner', 
                 'updated', 
-                #'count_likes', 
+                'count_likes', 
                 'text']
 
 
@@ -29,8 +29,8 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    post = serializers.HyperlinkedRelatedField(many=True, view_name='post-detail', read_only=True)
+    posts = serializers.HyperlinkedRelatedField(many=True, view_name='post-detail', read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ['url', 'id', 'username', 'post']
+        fields = ['url', 'id', 'username', 'posts']
