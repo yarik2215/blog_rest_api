@@ -54,7 +54,7 @@ class Comment(models.Model):
     '''
     Comment model. Refers on post and owner (user). 
     '''
-    post = ForeignKey('Post', on_delete=CASCADE, verbose_name=_('post'))
+    post = ForeignKey('Post', on_delete=CASCADE, verbose_name=_('post'), related_name='comments')
     owner = ForeignKey(get_user_model(), on_delete=CASCADE, verbose_name=_('owner'))
     text = models.TextField()
     updated = models.DateTimeField(_('updated'), auto_now=True)

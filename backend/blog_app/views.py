@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from .seriallizers import UserSerializer, CommentSerializer, PostSerializer
 from .permissions import IsOwnerOrReadOnly
 
-
+from django.core.mail import send_mail
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -33,6 +33,7 @@ class PostsViewSet(viewsets.ModelViewSet):
 
     @action(detail=True)
     def like(self, request, *args, **kwargs):
+        #some comments
         post = self.get_object()
         serializers = PostSerializer(post, context={'request':request})
         post_url = serializers.data['url']
@@ -41,6 +42,7 @@ class PostsViewSet(viewsets.ModelViewSet):
             message = f'liked {post_url}'
         except ValueError:
             message = f'already liked {post_url}'
+        send_mail('Like post.',f'Someone likes your post {post}','admin@example.com',[post.owner.email]) 
         return Response({'message':message}, status.HTTP_200_OK)
 
 

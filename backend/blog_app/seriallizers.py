@@ -14,7 +14,8 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'title', 'owner', 
                 'updated', 
                 'count_likes', 
-                'text']
+                'text',
+                'comments']
 
 
 
