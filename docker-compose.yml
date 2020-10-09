@@ -1,0 +1,73 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+    # command: python manage.py runserver 0.0.0.0:9000
+    command: sh /docker_runserver.sh
+
+    volumes:
+      - ./backend:/code/
+    networks:
+      - webnet
+    ports:
+      - 9000:9000
+    env_file:
+      - ./config/.env.dev
+    depends_on:
+      - db
+
+  db:
+    container_name: postgres_db
+    image: postgres:13.0
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=django
+      - POSTGRES_PASSWORD=django
+      - POSTGRES_DB=postgres_dev
+    networks:
+      - webnet
+      # ports:
+    #   - 5432:5555
+    expose:
+      - 5432
+
+  pg_admin:
+    container_name: pg_admin
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@mail.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_LISTEN_ADDRESS=0.0.0.0
+      - PGADMIN_LISTEN_PORT=5050
+    networks: 
+      - webnet
+    ports:
+      - 5050:5050
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "db:pgsql-server"
+
+  mailhog:
+    container_name: mailhog
+    image: mailhog/mailhog:latest
+    command: ["-smtp-bind-addr", "0.0.0.0:25"]
+    user: root
+    restart: on-failure
+    networks:
+      - webnet
+    expose:
+      - 25
+    ports:
+      - 8025:8025
+
+networks:
+  webnet:
+
+volumes:
+  postgres_data:
+  pgadmin-data:
